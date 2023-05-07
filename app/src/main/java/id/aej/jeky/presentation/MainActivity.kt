@@ -13,7 +13,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import id.aej.jeky.presentation.component.TextHeader
+import id.aej.jeky.presentation.navigation.Route
+import id.aej.jeky.presentation.screen.home.HomeScreen
+import id.aej.jeky.presentation.screen.login.LoginScreen
+import id.aej.jeky.presentation.screen.register.RegisterScreen
 import id.aej.jeky.presentation.theme.JekyTheme
 
 class MainActivity : ComponentActivity() {
@@ -33,9 +40,25 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable fun JekyApps() {
-  TextHeader(
-    modifier = Modifier.fillMaxSize(),
-    headerText = "Selamat Datang",
-    supportText = "Masukkan email dan password dari akun yang pernah kamu buat sebelumnya"
-  )
+  val navController = rememberNavController()
+  NavHost(navController = navController, startDestination = Route.Login.route) {
+    composable(
+      route = Route.Login.route
+    ) {
+      LoginScreen(navController)
+    }
+
+    composable(
+      route = Route.Register.route
+    ) {
+      RegisterScreen(navController)
+    }
+
+    composable(
+      route = Route.Home.route
+    ) {
+      HomeScreen(navController)
+    }
+
+  }
 }

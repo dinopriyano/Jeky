@@ -9,6 +9,7 @@ lifecycle-runtime-ktx = "2.6.1"
 activity-compose = "1.7.1"
 compose-bom = "2023.03.00"
 splash-api = "1.0.0-beta02"
+navigation-compose = "2.5.3"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -25,7 +26,9 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 splash-api = { group = "androidx.core", name = "core-splashscreen", version.ref = "splash-api" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
