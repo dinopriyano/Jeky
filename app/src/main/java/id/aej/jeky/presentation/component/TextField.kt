@@ -43,6 +43,7 @@ import id.aej.jeky.presentation.theme.Primary
   value: String = "",
   label: String = "",
   placeholder: String = "",
+  keyboardOptions: KeyboardOptions = KeyboardOptions(),
   onValueChange: (String) -> Unit
 ) {
   BaseTextField(
@@ -50,6 +51,7 @@ import id.aej.jeky.presentation.theme.Primary
     value = value,
     label = label,
     placeholder = placeholder,
+    keyboardOptions = keyboardOptions,
     onValueChange = onValueChange
   )
 }

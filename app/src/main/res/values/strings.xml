@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Jeky</string>
+    <string name="not_have_account">Belum punya akun?</string>
+    <string name="space">" "</string>
+    <string name="register">Daftar</string>
+    <string name="login_title">Selamat Datang</string>
+    <string name="login_description">Masukkan email dan password dari akun yang pernah kamu buat sebelumnya</string>
+    <string name="email">Email</string>
+    <string name="input_email">Masukan email</string>
+    <string name="password">Password</string>
+    <string name="input_password">Masukan password</string>
+    <string name="login">Masuk</string>
+    <string name="register_title">Daftar Akun</string>
+    <string name="register_description">Masukkan identitas yang diperlukan untuk dapat menikmati keseruannya</string>
+    <string name="confirm_password">"Konfirmasi Password "</string>
+    <string name="input_confirm_password">Masukan konfirmasi password</string>
+    <string name="full_name">Nama Lengkap</string>
+    <string name="your_full_name">Nama lengkap anda</string>
+    <string name="phone">No. HP</string>
+    <string name="your_phone_number">Nomor handphone anda</string>
+    <string name="have_account">Sudah punya akun?</string>
 </resources>
