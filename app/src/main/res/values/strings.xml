@@ -19,4 +19,6 @@
     <string name="phone">No. HP</string>
     <string name="your_phone_number">Nomor handphone anda</string>
     <string name="have_account">Sudah punya akun?</string>
+    <string name="location_permission_message">You must enable the location persmission first to access maps feature.</string>
+    <string name="allow_permission">Beri ijin</string>
 </resources>

@@ -63,6 +63,7 @@ dependencies {
   implementation(libs.navigation.compose)
   implementation(libs.bundles.maps)
   implementation(libs.accompanist.permission)
+  implementation(libs.navigation.material)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.espresso.core)

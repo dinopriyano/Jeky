@@ -46,7 +46,8 @@ import id.aej.jeky.presentation.theme.Primary
  */
 
 @Composable fun LoginScreen(
-  navHostController: NavHostController
+  onNavigateToRegister: () -> Unit,
+  onNavigateToHome: () -> Unit
 ) {
 
   var email by remember {
@@ -118,7 +119,8 @@ import id.aej.jeky.presentation.theme.Primary
         containerColor = Primary
       ),
       onClick = {
-        navHostController.navigate(Route.Home.route)
+        // TODO: navigate to home
+        onNavigateToHome.invoke()
       },
       contentPadding = PaddingValues(vertical = 16.dp)
     ) {
@@ -141,7 +143,7 @@ import id.aej.jeky.presentation.theme.Primary
         registerString.getStringAnnotations(offset, offset)
           .firstOrNull()?.let { span ->
             if(span.item == registerText) {
-              navHostController.navigate(Route.Register.route)
+              onNavigateToRegister.invoke()
             }
           }
       }

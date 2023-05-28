@@ -3,27 +3,23 @@ package id.aej.jeky.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import id.aej.jeky.presentation.component.TextHeader
+import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
+import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import id.aej.jeky.presentation.navigation.Route
 import id.aej.jeky.presentation.screen.home.HomeScreen
 import id.aej.jeky.presentation.screen.login.LoginScreen
 import id.aej.jeky.presentation.screen.register.RegisterScreen
 import id.aej.jeky.presentation.theme.JekyTheme
 
-class MainActivity : ComponentActivity() {
+@ExperimentalMaterial3Api @ExperimentalComposeUiApi class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     installSplashScreen().apply {
@@ -39,25 +35,42 @@ class MainActivity : ComponentActivity() {
   }
 }
 
-@Composable fun JekyApps() {
-  val navController = rememberNavController()
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalPermissionsApi::class)
+@ExperimentalComposeUiApi @ExperimentalMaterial3Api @Composable fun JekyApps() {
+  val bottomSheetNavigator = rememberBottomSheetNavigator()
+  val navController = rememberNavController(bottomSheetNavigator)
+
   NavHost(navController = navController, startDestination = Route.Login.route) {
     composable(
       route = Route.Login.route
     ) {
-      LoginScreen(navController)
+      LoginScreen(
+        onNavigateToHome = {
+          navController.navigate(Route.Home.route)
+        },
+        onNavigateToRegister = {
+          navController.navigate(Route.Register.route)
+        }
+      )
     }
 
     composable(
       route = Route.Register.route
     ) {
-      RegisterScreen(navController)
+      RegisterScreen(
+        onNavigateBack = {
+          navController.popBackStack()
+        },
+        onNavigateToHome = {
+          navController.navigate(Route.Home.route)
+        }
+      )
     }
 
     composable(
       route = Route.Home.route
     ) {
-      HomeScreen(navController)
+      HomeScreen()
     }
 
   }

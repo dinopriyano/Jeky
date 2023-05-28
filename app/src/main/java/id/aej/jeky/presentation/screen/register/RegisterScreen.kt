@@ -46,7 +46,8 @@ import id.aej.jeky.presentation.theme.Primary
  */
 
 @Composable fun RegisterScreen(
-  navHostController: NavHostController
+  onNavigateBack: () -> Unit,
+  onNavigateToHome: () -> Unit
 ) {
   var name by remember {
     mutableStateOf("")
@@ -184,7 +185,7 @@ import id.aej.jeky.presentation.theme.Primary
         registerString.getStringAnnotations(offset, offset)
           .firstOrNull()?.let { span ->
             if(span.item == loginText) {
-              navHostController.popBackStack()
+              onNavigateBack.invoke()
             }
           }
       }
