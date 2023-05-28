@@ -2,6 +2,7 @@ package id.aej.jeky.presentation.screen.home
 
 import android.Manifest
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -20,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import id.aej.jeky.R
+import id.aej.jeky.presentation.component.PointField
 import id.aej.jeky.presentation.theme.Primary
 
 /**
@@ -31,6 +37,7 @@ import id.aej.jeky.presentation.theme.Primary
 
 @OptIn(ExperimentalPermissionsApi::class) @Composable fun HomeScreen() {
 
+  val coroutineScope = rememberCoroutineScope()
   val locationPermissionState = rememberMultiplePermissionsState(
     listOf(
       Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -38,13 +45,36 @@ import id.aej.jeky.presentation.theme.Primary
     )
   )
 
-  if(locationPermissionState.allPermissionsGranted) {
-    GoogleMap(
-      modifier = Modifier.fillMaxSize(),
-      properties = MapProperties(isMyLocationEnabled = true),
-      uiSettings = MapUiSettings(zoomControlsEnabled = false, compassEnabled = false)
-    ) {
+  var pickup by remember {
+    mutableStateOf("")
+  }
+  var destination by remember {
+    mutableStateOf("")
+  }
 
+  if(locationPermissionState.allPermissionsGranted) {
+    Box(modifier = Modifier.fillMaxSize()) {
+      GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        uiSettings = MapUiSettings(zoomControlsEnabled = false, compassEnabled = false)
+      ) {
+
+      }
+      PointField(modifier = Modifier
+        .fillMaxWidth()
+        .padding(top = 40.dp)
+        .padding(horizontal = 24.dp),
+        readOnly = true,
+        pickupValue = pickup,
+        destinationValue = destination,
+        pickupPlaceholder = stringResource(id = R.string.pickup_location_txt),
+        destinationPlaceholder = stringResource(R.string.destination_location_txt),
+        onPickupFocused = {},
+        onDestinationFocused = {},
+        onEditButtonClick = {
+          // TODO: open pick location bottom sheet
+        }
+      )
     }
   } else {
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
