@@ -35,9 +35,10 @@ import id.aej.jeky.presentation.theme.Primary
  * Created by dino.priyano on 07/05/23.
  */
 
-@OptIn(ExperimentalPermissionsApi::class) @Composable fun HomeScreen() {
+@OptIn(ExperimentalPermissionsApi::class) @Composable fun HomeScreen(
+  onEditButtonClick: () -> Unit
+) {
 
-  val coroutineScope = rememberCoroutineScope()
   val locationPermissionState = rememberMultiplePermissionsState(
     listOf(
       Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -73,6 +74,7 @@ import id.aej.jeky.presentation.theme.Primary
         onDestinationFocused = {},
         onEditButtonClick = {
           // TODO: open pick location bottom sheet
+          onEditButtonClick.invoke()
         }
       )
     }

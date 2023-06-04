@@ -24,4 +24,6 @@
     <string name="edit">Edit</string>
     <string name="pickup_location_txt">Pilih lokasi jemput</string>
     <string name="destination_location_txt">Pilih lokasi tujuan</string>
+    <string name="pickup_title">Set lokasi jemput</string>
+    <string name="destination_title">Set lokasi tujuan</string>
 </resources>
