@@ -3,8 +3,12 @@ package id.aej.jeky.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
@@ -12,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
@@ -40,9 +45,13 @@ import id.aej.jeky.presentation.theme.JekyTheme
   }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi @ExperimentalMaterial3Api @Composable fun JekyApps() {
-  val bottomSheetNavigator = rememberBottomSheetNavigator()
+  val sheetState = rememberModalBottomSheetState(
+    ModalBottomSheetValue.Hidden,
+    skipHalfExpanded = true
+  )
+  val bottomSheetNavigator = remember { BottomSheetNavigator(sheetState) }
   val navController = rememberNavController(bottomSheetNavigator)
 
   ModalBottomSheetLayout(
@@ -92,7 +101,12 @@ import id.aej.jeky.presentation.theme.JekyTheme
         )
       ) { backStackEntry ->
         val isToGetPickupLocation = backStackEntry.arguments?.getBoolean("isToGetPickupLocation") ?: true
-        PickLocationBottomSheet(isToGetPickupLocation)
+        PickLocationBottomSheet(
+          isToGetPickupLocation,
+          onClose = {
+            navController.popBackStack()
+          }
+        )
       }
 
     }

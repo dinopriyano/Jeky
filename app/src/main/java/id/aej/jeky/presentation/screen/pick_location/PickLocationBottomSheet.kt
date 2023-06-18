@@ -34,7 +34,10 @@ import id.aej.jeky.presentation.theme.LightGray
  * Created by dino.priyano on 04/06/23.
  */
 
-@Composable fun PickLocationBottomSheet(isToGetPickupLocation: Boolean) {
+@Composable fun PickLocationBottomSheet(
+  isToGetPickupLocation: Boolean,
+  onClose: () -> Unit
+) {
 
   var pickup by remember {
     mutableStateOf("")
@@ -60,7 +63,7 @@ import id.aej.jeky.presentation.theme.LightGray
         .padding(horizontal = 24.dp)
         .padding(top = 16.dp)
     ) {
-      IconButton(modifier = Modifier.size(24.dp), onClick = { /*TODO*/ }) {
+      IconButton(modifier = Modifier.size(24.dp), onClick = onClose) {
         Icon(
           painter = painterResource(id = R.drawable.ic_close),
           contentDescription = "Close Pick Location"
