@@ -18,3 +18,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Jeky"
 include(":app")
+include(":core")

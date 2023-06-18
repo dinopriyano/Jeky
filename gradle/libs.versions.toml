@@ -12,6 +12,7 @@ splash-api = "1.0.0-beta02"
 navigation-compose = "2.5.3"
 accompanist = "0.31.0-alpha"
 constraint-layout = "1.0.1"
+ksp = "1.8.10-1.0.9"
 
 # Maps
 secrets-gradle-plugin = "2.0.1"
@@ -19,6 +20,11 @@ play-services-maps = "18.1.0"
 play-service-location = "21.0.1"
 maps-compose = "2.8.0"
 maps-ktx = "3.2.1"
+appcompat = "1.6.1"
+material = "1.9.0"
+
+#Room
+room_version = "2.5.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -42,6 +48,11 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraint-layout" }
 
+# Room database
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room_version" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room_version" }
+
 # Maps
 play-services-maps = { module = "com.google.android.gms:play-services-maps", version.ref = "play-services-maps" }
 play-service-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-service-location" }
@@ -51,6 +62,8 @@ maps-utils-ktx = { module = "com.google.maps.android:maps-utils-ktx", version.re
 
 # Permission request
 accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+com-google-android-material-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "agp" }
@@ -58,6 +71,10 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 
 # Maps
 secrets-gradle-plugin = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets-gradle-plugin" }
+com-android-library = { id = "com.android.library", version.ref = "agp" }
+
+# KSP
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
 
 [bundles]
 maps = ["play-services-maps", "play-service-location", "maps-compose", "maps-ktx", "maps-utils-ktx"]
