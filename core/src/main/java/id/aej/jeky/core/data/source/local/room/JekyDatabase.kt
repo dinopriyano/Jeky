@@ -13,7 +13,7 @@ import id.aej.jeky.core.data.source.local.room.entity.UserEntity
 
 @Database(
   entities = [UserEntity::class],
-  version = 1,
+  version = 2,
   exportSchema = true
 )
 abstract class JekyDatabase: RoomDatabase() {
@@ -30,7 +30,7 @@ abstract class JekyDatabase: RoomDatabase() {
           val dbBuilder = Room.databaseBuilder(
             context.applicationContext,
             JekyDatabase::class.java,
-            "jeky.db"
+            "jeky.database"
           )
             .fallbackToDestructiveMigration()
 
@@ -42,5 +42,4 @@ abstract class JekyDatabase: RoomDatabase() {
       }
     }
   }
-
 }

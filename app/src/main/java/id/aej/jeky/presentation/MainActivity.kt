@@ -25,8 +25,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import id.aej.jeky.presentation.navigation.Route
 import id.aej.jeky.presentation.screen.home.HomeScreen
 import id.aej.jeky.presentation.screen.login.LoginScreen
+import id.aej.jeky.presentation.screen.login.LoginViewModel
 import id.aej.jeky.presentation.screen.pick_location.PickLocationBottomSheet
 import id.aej.jeky.presentation.screen.register.RegisterScreen
+import id.aej.jeky.presentation.screen.register.RegisterViewModel
 import id.aej.jeky.presentation.theme.JekyTheme
 
 @ExperimentalMaterial3Api @ExperimentalComposeUiApi class MainActivity : ComponentActivity() {
@@ -61,7 +63,9 @@ import id.aej.jeky.presentation.theme.JekyTheme
       composable(
         route = Route.Login.route
       ) {
+        val viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = LoginViewModel.Factory)
         LoginScreen(
+          viewModel = viewModel,
           onNavigateToHome = {
             navController.navigate(Route.Home.route)
           },
@@ -74,7 +78,9 @@ import id.aej.jeky.presentation.theme.JekyTheme
       composable(
         route = Route.Register.route
       ) {
+        val viewModel: RegisterViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = RegisterViewModel.Factory)
         RegisterScreen(
+          viewModel = viewModel,
           onNavigateBack = {
             navController.popBackStack()
           },

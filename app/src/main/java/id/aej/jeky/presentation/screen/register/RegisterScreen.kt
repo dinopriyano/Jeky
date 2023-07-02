@@ -1,5 +1,6 @@
 package id.aej.jeky.presentation.screen.register
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,12 +18,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -34,6 +39,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import id.aej.jeky.R
+import id.aej.jeky.core.domain.model.User
 import id.aej.jeky.presentation.component.PasswordTextField
 import id.aej.jeky.presentation.component.PlainTextField
 import id.aej.jeky.presentation.component.TextHeader
@@ -46,6 +52,7 @@ import id.aej.jeky.presentation.theme.Primary
  */
 
 @Composable fun RegisterScreen(
+  viewModel: RegisterViewModel,
   onNavigateBack: () -> Unit,
   onNavigateToHome: () -> Unit
 ) {
@@ -64,6 +71,8 @@ import id.aej.jeky.presentation.theme.Primary
   var confirmPassword by remember {
     mutableStateOf("")
   }
+  val uiState by viewModel.registerUiState.collectAsState(initial = RegisterUiState.Idle)
+  val context = LocalContext.current
   val haveAccount = stringResource(R.string.have_account) + stringResource(R.string.space)
   val loginText = stringResource(R.string.login)
   val registerString = buildAnnotatedString {
@@ -74,6 +83,31 @@ import id.aej.jeky.presentation.theme.Primary
     withStyle(style = SpanStyle(color = Primary, fontWeight = FontWeight.SemiBold)) {
       pushStringAnnotation(tag = loginText, annotation = loginText)
       append(loginText)
+    }
+  }
+
+  val isButtonEnable by remember {
+    derivedStateOf {
+      name.trim().isNotEmpty() &&
+          phone.trim().isNotEmpty() &&
+          email.trim().isNotEmpty() &&
+          password.trim().isNotEmpty() &&
+          confirmPassword == password
+    }
+  }
+
+  LaunchedEffect(uiState) {
+    when (uiState) {
+      is RegisterUiState.Loading -> {
+
+      }
+      is RegisterUiState.Success -> {
+        onNavigateBack.invoke()
+      }
+      is RegisterUiState.Error -> {
+        Toast.makeText(context, "Error: ${(uiState as RegisterUiState.Error).message}", Toast.LENGTH_SHORT).show()
+      }
+      else -> Unit
     }
   }
 
@@ -159,11 +193,18 @@ import id.aej.jeky.presentation.theme.Primary
         .padding(horizontal = 24.dp)
         .padding(top = 60.dp),
       shape = RoundedCornerShape(15.dp),
+      enabled = isButtonEnable,
       colors = ButtonDefaults.buttonColors(
         contentColor = Color.White,
         containerColor = Primary
       ),
-      onClick = { /*TODO*/ },
+      onClick = {
+        viewModel.register(
+          User(
+            email, password, name, phone
+          )
+        )
+      },
       contentPadding = PaddingValues(vertical = 16.dp)
     ) {
       Text(
