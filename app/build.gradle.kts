@@ -3,6 +3,8 @@ plugins {
   alias(libs.plugins.com.android.application)
   alias(libs.plugins.org.jetbrains.kotlin.android)
   alias(libs.plugins.secrets.gradle.plugin)
+  alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -66,6 +68,9 @@ dependencies {
   implementation(libs.accompanist.permission)
   implementation(libs.navigation.material)
   implementation(libs.constraint.layout)
+  implementation(libs.lottie)
+  implementation(libs.kotlin.serialization)
+  implementation(libs.gson)
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.espresso.core)

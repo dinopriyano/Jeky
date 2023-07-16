@@ -1,5 +1,6 @@
 package id.aej.jeky.core.data.repository
 
+import android.database.sqlite.SQLiteConstraintException
 import id.aej.jeky.core.data.source.Resource
 import id.aej.jeky.core.data.source.local.room.dao.UserDao
 import id.aej.jeky.core.data.source.local.room.entity.toDomain
@@ -25,10 +26,10 @@ class AuthRepositoryImpl constructor(
       if (users.isNotEmpty()) {
         emit(Resource.Success(users.first().toDomain()))
       } else {
-        emit(Resource.Error(-1, "Ups, invalid login"))
+        emit(Resource.Error(-1, "Your credential not valid, please check your email and password!"))
       }
     }.catch { e ->
-      emit(Resource.Error(-1, e.message ?: "Ups, something wrong"))
+      emit(Resource.Error(-1, e.message ?: "Something wrong."))
     }.flowOn(Dispatchers.IO)
   }
 
@@ -37,7 +38,14 @@ class AuthRepositoryImpl constructor(
       dao.insertUser(user.toEntity())
       emit(Resource.Success(user))
     }.catch { e ->
-      emit(Resource.Error(-1, e.message ?: "Ups, something wrong"))
+      when (e) {
+        is SQLiteConstraintException -> {
+          emit(Resource.Error(-1, "Email already registered in apps, use another email!"))
+        }
+        else -> {
+          emit(Resource.Error(-1, e.message ?: "Something wrong"))
+        }
+      }
     }.flowOn(Dispatchers.IO)
   }
 }

@@ -1,5 +1,7 @@
 package id.aej.jeky.presentation
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,9 +22,10 @@ import com.google.accompanist.navigation.material.BottomSheetNavigator
 import com.google.accompanist.navigation.material.ExperimentalMaterialNavigationApi
 import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
-import com.google.accompanist.navigation.material.rememberBottomSheetNavigator
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.gson.Gson
+import id.aej.jeky.domain.model.EmptyStateModel
 import id.aej.jeky.presentation.navigation.Route
+import id.aej.jeky.presentation.screen.error.ErrorScreen
 import id.aej.jeky.presentation.screen.home.HomeScreen
 import id.aej.jeky.presentation.screen.login.LoginScreen
 import id.aej.jeky.presentation.screen.login.LoginViewModel
@@ -47,7 +50,7 @@ import id.aej.jeky.presentation.theme.JekyTheme
   }
 }
 
-@OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
+@SuppressLint("NewApi") @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
 @ExperimentalComposeUiApi @ExperimentalMaterial3Api @Composable fun JekyApps() {
   val sheetState = rememberModalBottomSheetState(
     ModalBottomSheetValue.Hidden,
@@ -71,6 +74,10 @@ import id.aej.jeky.presentation.theme.JekyTheme
           },
           onNavigateToRegister = {
             navController.navigate(Route.Register.route)
+          },
+          onLoginError = {
+            val json = Uri.encode(Gson().toJson(it))
+            navController.navigate("${Route.Error.route}/$json")
           }
         )
       }
@@ -86,6 +93,10 @@ import id.aej.jeky.presentation.theme.JekyTheme
           },
           onNavigateToHome = {
             navController.navigate(Route.Home.route)
+          },
+          onRegisterError = {
+            val json = Uri.encode(Gson().toJson(it))
+            navController.navigate("${Route.Error.route}/$json")
           }
         )
       }
@@ -113,6 +124,20 @@ import id.aej.jeky.presentation.theme.JekyTheme
             navController.popBackStack()
           }
         )
+      }
+
+      bottomSheet(
+        route = "${Route.Error.route}/{empty-params}",
+        arguments = listOf(
+          navArgument("empty-params") { type = NavType.StringType }
+        )
+      ) { backStackEntry ->
+        val emptyParams = backStackEntry.arguments?.getString("empty-params")
+        ErrorScreen(
+          Gson().fromJson(emptyParams, EmptyStateModel::class.java)
+        ) {
+          navController.popBackStack()
+        }
       }
 
     }

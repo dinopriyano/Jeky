@@ -1,6 +1,5 @@
 package id.aej.jeky.presentation.screen.login
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,9 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -37,13 +37,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import id.aej.jeky.R
+import id.aej.jeky.domain.model.EmptyStateModel
 import id.aej.jeky.presentation.component.PasswordTextField
 import id.aej.jeky.presentation.component.TextHeader
 import id.aej.jeky.presentation.component.TrailingTextField
-import id.aej.jeky.presentation.navigation.Route
-import id.aej.jeky.presentation.screen.register.RegisterUiState
 import id.aej.jeky.presentation.theme.Black
 import id.aej.jeky.presentation.theme.Primary
 
@@ -51,10 +49,11 @@ import id.aej.jeky.presentation.theme.Primary
  * Created by dino.priyano on 07/05/23.
  */
 
-@Composable fun LoginScreen(
+@OptIn(ExperimentalComposeUiApi::class) @Composable fun LoginScreen(
   viewModel: LoginViewModel,
   onNavigateToRegister: () -> Unit,
-  onNavigateToHome: () -> Unit
+  onNavigateToHome: () -> Unit,
+  onLoginError: (EmptyStateModel) -> Unit
 ) {
 
   var email by remember {
@@ -64,7 +63,7 @@ import id.aej.jeky.presentation.theme.Primary
     mutableStateOf("")
   }
   val uiState by viewModel.loginUiState.collectAsState(initial = LoginUiState.Idle)
-  val context = LocalContext.current
+  val keyboardController = LocalSoftwareKeyboardController.current
   val notHaveAccount = stringResource(R.string.not_have_account) + stringResource(R.string.space)
   val registerText = stringResource(R.string.register)
   val registerString = buildAnnotatedString {
@@ -93,7 +92,14 @@ import id.aej.jeky.presentation.theme.Primary
         onNavigateToHome.invoke()
       }
       is LoginUiState.Error -> {
-        Toast.makeText(context, "Error: ${(uiState as LoginUiState.Error).message}", Toast.LENGTH_SHORT).show()
+        onLoginError.invoke(
+          EmptyStateModel(
+            R.raw.jeky_error,
+            "Ups, something error",
+            (uiState as LoginUiState.Error).message,
+            "Okay"
+          )
+        )
       }
       else -> Unit
     }
@@ -151,6 +157,7 @@ import id.aej.jeky.presentation.theme.Primary
       ),
       onClick = {
         viewModel.login(email, password)
+        keyboardController?.hide()
       },
       contentPadding = PaddingValues(vertical = 16.dp)
     ) {

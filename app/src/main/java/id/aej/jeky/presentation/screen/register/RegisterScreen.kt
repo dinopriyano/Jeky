@@ -1,6 +1,5 @@
 package id.aej.jeky.presentation.screen.register
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -25,9 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -37,9 +37,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import id.aej.jeky.R
 import id.aej.jeky.core.domain.model.User
+import id.aej.jeky.domain.model.EmptyStateModel
 import id.aej.jeky.presentation.component.PasswordTextField
 import id.aej.jeky.presentation.component.PlainTextField
 import id.aej.jeky.presentation.component.TextHeader
@@ -51,10 +51,11 @@ import id.aej.jeky.presentation.theme.Primary
  * Created by dino.priyano on 07/05/23.
  */
 
-@Composable fun RegisterScreen(
+@OptIn(ExperimentalComposeUiApi::class) @Composable fun RegisterScreen(
   viewModel: RegisterViewModel,
   onNavigateBack: () -> Unit,
-  onNavigateToHome: () -> Unit
+  onNavigateToHome: () -> Unit,
+  onRegisterError: (EmptyStateModel) -> Unit
 ) {
   var name by remember {
     mutableStateOf("")
@@ -72,7 +73,7 @@ import id.aej.jeky.presentation.theme.Primary
     mutableStateOf("")
   }
   val uiState by viewModel.registerUiState.collectAsState(initial = RegisterUiState.Idle)
-  val context = LocalContext.current
+  val keyboardController = LocalSoftwareKeyboardController.current
   val haveAccount = stringResource(R.string.have_account) + stringResource(R.string.space)
   val loginText = stringResource(R.string.login)
   val registerString = buildAnnotatedString {
@@ -105,7 +106,14 @@ import id.aej.jeky.presentation.theme.Primary
         onNavigateBack.invoke()
       }
       is RegisterUiState.Error -> {
-        Toast.makeText(context, "Error: ${(uiState as RegisterUiState.Error).message}", Toast.LENGTH_SHORT).show()
+        onRegisterError.invoke(
+          EmptyStateModel(
+            R.raw.jeky_error,
+            "Ups, something error",
+            (uiState as RegisterUiState.Error).message,
+            "Okay"
+          )
+        )
       }
       else -> Unit
     }
@@ -204,6 +212,7 @@ import id.aej.jeky.presentation.theme.Primary
             email, password, name, phone
           )
         )
+        keyboardController?.hide()
       },
       contentPadding = PaddingValues(vertical = 16.dp)
     ) {
