@@ -89,6 +89,7 @@ import id.aej.jeky.presentation.theme.Primary
 
       }
       is LoginUiState.Success -> {
+        viewModel.storeEmail((uiState as LoginUiState.Success).data.email)
         onNavigateToHome.invoke()
       }
       is LoginUiState.Error -> {

@@ -15,6 +15,7 @@ constraint-layout = "1.0.1"
 ksp = "1.8.10-1.0.9"
 lottie = "6.0.1"
 gson = "2.10.1"
+datastore = "1.0.0"
 
 # Maps
 secrets-gradle-plugin = "2.0.1"
@@ -49,6 +50,7 @@ splash-api = { group = "androidx.core", name = "core-splashscreen", version.ref 
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
 navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
 constraint-layout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraint-layout" }
+preferences-data-store = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 
 # Room database
 room-compiler = { module = "androidx.room:room-compiler", version.ref = "room_version" }

@@ -8,7 +8,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import id.aej.jeky.JekyApplication
 import id.aej.jeky.core.data.source.Resource
 import id.aej.jeky.core.domain.model.User
-import id.aej.jeky.core.domain.repository.AuthRepository
+import id.aej.jeky.core.domain.usecase.AuthUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
  * Created by dino.priyano on 02/07/23.
  */
 class RegisterViewModel constructor(
-  private val repository: AuthRepository
+  private val useCase: AuthUseCase
 ): ViewModel() {
 
   private val _registerUiState = MutableSharedFlow<RegisterUiState>()
@@ -27,7 +27,7 @@ class RegisterViewModel constructor(
     val Factory: ViewModelProvider.Factory = viewModelFactory {
       initializer {
         val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as JekyApplication)
-        RegisterViewModel(application.jekyContainer.authRepository)
+        RegisterViewModel(application.jekyContainer.authUseCase)
       }
     }
   }
@@ -35,7 +35,7 @@ class RegisterViewModel constructor(
   fun register(user: User) {
     viewModelScope.launch {
       _registerUiState.emit(RegisterUiState.Loading)
-      repository.register(user)
+      useCase.register(user)
         .collect {
           when (it) {
             is Resource.Success -> {
