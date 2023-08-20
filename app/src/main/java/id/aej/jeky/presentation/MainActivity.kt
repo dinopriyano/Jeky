@@ -33,6 +33,7 @@ import id.aej.jeky.presentation.screen.home.HomeScreen
 import id.aej.jeky.presentation.screen.login.LoginScreen
 import id.aej.jeky.presentation.screen.login.LoginViewModel
 import id.aej.jeky.presentation.screen.pick_location.PickLocationBottomSheet
+import id.aej.jeky.presentation.screen.pick_location.PickLocationViewModel
 import id.aej.jeky.presentation.screen.register.RegisterScreen
 import id.aej.jeky.presentation.screen.register.RegisterViewModel
 import id.aej.jeky.presentation.theme.JekyTheme
@@ -129,8 +130,10 @@ import id.aej.jeky.presentation.theme.JekyTheme
           )
         ) { backStackEntry ->
           val isToGetPickupLocation = backStackEntry.arguments?.getBoolean("isToGetPickupLocation") ?: true
+          val viewModel: PickLocationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = PickLocationViewModel.Factory)
           PickLocationBottomSheet(
             isToGetPickupLocation,
+            viewModel,
             onClose = {
               navController.popBackStack()
             }

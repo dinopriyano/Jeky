@@ -45,6 +45,9 @@ dependencies {
   // Data Store
   implementation(libs.preferences.data.store)
 
+  // Networking
+  implementation(libs.bundles.networking)
+
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.espresso.core)
