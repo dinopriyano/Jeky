@@ -1,6 +1,8 @@
 package id.aej.jeky.presentation.screen.pick_location
 
+import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,7 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,19 +53,30 @@ import kotlinx.coroutines.flow.filter
  * Created by dino.priyano on 04/06/23.
  */
 
+const val PLACES_BUNDLE = "places"
+
 @Composable fun PickLocationBottomSheet(
   isToGetPickupLocation: Boolean,
   viewModel: PickLocationViewModel,
+  onPlaceClick: (PlacesItem, Boolean) -> Unit,
   onClose: () -> Unit
 ) {
 
   val uiState by viewModel.uiState.collectAsState()
+
+  val focusRequester by remember {
+    mutableStateOf(FocusRequester())
+  }
 
   var pickup by remember {
     mutableStateOf("")
   }
   var destination by remember {
     mutableStateOf("")
+  }
+
+  LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
   }
 
   LaunchedEffect(pickup) {
@@ -120,6 +135,12 @@ import kotlinx.coroutines.flow.filter
       )
     }
 
+    val (pickupFocusRequester, destinationFocusRequester) = if (isToGetPickupLocation) {
+      Pair(focusRequester, null)
+    } else {
+      Pair(null, focusRequester)
+    }
+
     PointField(
       modifier = Modifier
         .fillMaxWidth()
@@ -131,6 +152,8 @@ import kotlinx.coroutines.flow.filter
       destinationPlaceholder = stringResource(R.string.destination_location_txt),
       onPickupFocused = {},
       onDestinationFocused = {},
+      pickupFocusRequester = pickupFocusRequester,
+      destinationFocusRequester = destinationFocusRequester,
       elevation = 0.dp,
       backgroundColor = LightGray,
       borderColor = Border,
@@ -161,14 +184,14 @@ import kotlinx.coroutines.flow.filter
           verticalArrangement = Arrangement.spacedBy(16.dp),
           contentPadding = PaddingValues(vertical = 16.dp)
         ) {
-          items((uiState as PickLocationUiState.Success).data.places) {
+          items((uiState as? PickLocationUiState.Success)?.data?.places.orEmpty()) {
             PlaceItem(
               place = it,
               modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
               onClick = {
-
+                onPlaceClick.invoke(it, isToGetPickupLocation)
               }
             )
           }
@@ -185,7 +208,7 @@ import kotlinx.coroutines.flow.filter
   onClick: (PlacesItem) -> Unit
 ) {
   Row(
-    modifier = modifier,
+    modifier = modifier.clickable { onClick.invoke(place) },
     verticalAlignment = Alignment.CenterVertically
   ) {   
     Icon(

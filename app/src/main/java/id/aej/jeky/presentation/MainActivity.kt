@@ -27,11 +27,14 @@ import com.google.accompanist.navigation.material.ModalBottomSheetLayout
 import com.google.accompanist.navigation.material.bottomSheet
 import com.google.gson.Gson
 import id.aej.jeky.domain.model.EmptyStateModel
+import id.aej.jeky.domain.model.PlacesModel
 import id.aej.jeky.presentation.navigation.Route
 import id.aej.jeky.presentation.screen.error.ErrorScreen
 import id.aej.jeky.presentation.screen.home.HomeScreen
+import id.aej.jeky.presentation.screen.home.HomeViewModel
 import id.aej.jeky.presentation.screen.login.LoginScreen
 import id.aej.jeky.presentation.screen.login.LoginViewModel
+import id.aej.jeky.presentation.screen.pick_location.PLACES_BUNDLE
 import id.aej.jeky.presentation.screen.pick_location.PickLocationBottomSheet
 import id.aej.jeky.presentation.screen.pick_location.PickLocationViewModel
 import id.aej.jeky.presentation.screen.register.RegisterScreen
@@ -116,9 +119,16 @@ import id.aej.jeky.presentation.theme.JekyTheme
         composable(
           route = Route.Home.route
         ) {
+          val viewModel: HomeViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = HomeViewModel.Factory)
+          val saveStateHandle = navController.currentBackStackEntry?.savedStateHandle
           HomeScreen(
-            onEditButtonClick = {
+            viewModel = viewModel,
+            saveStateHandle = saveStateHandle,
+            onPickupClick = {
               navController.navigate("${Route.PickLocationBottomSheet.route}/true")
+            },
+            onDestinationClick = {
+              navController.navigate("${Route.PickLocationBottomSheet.route}/false")
             }
           )
         }
@@ -134,6 +144,17 @@ import id.aej.jeky.presentation.theme.JekyTheme
           PickLocationBottomSheet(
             isToGetPickupLocation,
             viewModel,
+            onPlaceClick = { place, isPickupPlace ->
+              navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set(PLACES_BUNDLE, PlacesModel(
+                  locationName = place.formattedAddress,
+                  latitude = place.location.latitude,
+                  longitude = place.location.longitude,
+                  isPickupLocation = isPickupPlace
+                ))
+              navController.popBackStack()
+            },
             onClose = {
               navController.popBackStack()
             }
