@@ -40,6 +40,8 @@ import id.aej.jeky.presentation.screen.pick_location.PickLocationViewModel
 import id.aej.jeky.presentation.screen.register.RegisterScreen
 import id.aej.jeky.presentation.screen.register.RegisterViewModel
 import id.aej.jeky.presentation.theme.JekyTheme
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 @ExperimentalMaterial3Api @ExperimentalComposeUiApi class MainActivity : ComponentActivity() {
 
@@ -124,33 +126,39 @@ import id.aej.jeky.presentation.theme.JekyTheme
           HomeScreen(
             viewModel = viewModel,
             saveStateHandle = saveStateHandle,
-            onPickupClick = {
-              navController.navigate("${Route.PickLocationBottomSheet.route}/true")
+            onPickupClick = { origin, destination ->
+              navController.navigate("${Route.PickLocationBottomSheet.route}/true/${origin.encodeToUrl()}/${destination.encodeToUrl()}")
             },
-            onDestinationClick = {
-              navController.navigate("${Route.PickLocationBottomSheet.route}/false")
+            onDestinationClick = { origin, destination ->
+              navController.navigate("${Route.PickLocationBottomSheet.route}/false/${origin.encodeToUrl()}/${destination.encodeToUrl()}")
             }
           )
         }
 
         bottomSheet(
-          route = "${Route.PickLocationBottomSheet.route}/{isToGetPickupLocation}",
+          route = "${Route.PickLocationBottomSheet.route}/{isToGetPickupLocation}/{originLocation}/{destinationLocation}",
           arguments = listOf(
-            navArgument("isToGetPickupLocation") { type = NavType.BoolType }
+            navArgument("isToGetPickupLocation") { type = NavType.BoolType },
+            navArgument("originLocation") { type = NavType.StringType },
+            navArgument("destinationLocation") { type = NavType.StringType },
           )
         ) { backStackEntry ->
           val isToGetPickupLocation = backStackEntry.arguments?.getBoolean("isToGetPickupLocation") ?: true
+          val originLocation = backStackEntry.arguments?.getString("originLocation").orEmpty().decodeFromUrl()
+          val destinationLocation = backStackEntry.arguments?.getString("destinationLocation").orEmpty().decodeFromUrl()
           val viewModel: PickLocationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(factory = PickLocationViewModel.Factory)
           PickLocationBottomSheet(
             isToGetPickupLocation,
+            if (originLocation == "-") "" else originLocation,
+            if (destinationLocation == "-") "" else destinationLocation,
             viewModel,
             onPlaceClick = { place, isPickupPlace ->
               navController.previousBackStackEntry
                 ?.savedStateHandle
                 ?.set(PLACES_BUNDLE, PlacesModel(
-                  locationName = place.formattedAddress,
-                  latitude = place.location.latitude,
-                  longitude = place.location.longitude,
+                  locationName = place.formattedAddress.orEmpty(),
+                  latitude = place.location?.latitude ?: 0.0,
+                  longitude = place.location?.longitude ?: 0.0,
                   isPickupLocation = isPickupPlace
                 ))
               navController.popBackStack()
@@ -178,4 +186,12 @@ import id.aej.jeky.presentation.theme.JekyTheme
       }
     }
   }
+}
+
+fun String.encodeToUrl(): String {
+  return URLEncoder.encode(this, "UTF-8")
+}
+
+fun String.decodeFromUrl(): String {
+  return URLDecoder.decode(this, "UTF-8")
 }

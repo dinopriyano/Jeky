@@ -29,6 +29,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.PolyUtil
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Polyline
@@ -46,8 +47,8 @@ import id.aej.jeky.presentation.theme.Primary
 @OptIn(ExperimentalPermissionsApi::class) @Composable fun HomeScreen(
   saveStateHandle: SavedStateHandle?,
   viewModel: HomeViewModel,
-  onPickupClick: () -> Unit,
-  onDestinationClick: () -> Unit
+  onPickupClick: (String, String) -> Unit,
+  onDestinationClick: (String, String) -> Unit
 ) {
 
   val uiState by viewModel.uiState.collectAsState()
@@ -67,10 +68,6 @@ import id.aej.jeky.presentation.theme.Primary
     mutableStateOf(PlacesModel())
   }
 
-  var tracks = remember {
-    mutableStateListOf<LatLng>()
-  }
-
   LaunchedEffect(placesResult) {
     if (placesResult.locationName.isNotEmpty()) {
       if (placesResult.isPickupLocation) {
@@ -87,25 +84,15 @@ import id.aej.jeky.presentation.theme.Primary
     }
   }
 
-  LaunchedEffect(uiState) {
-    (uiState as? HomeUiState.Success)?.data?.routes?.forEach {
-      it?.legs?.forEach {
-        it?.steps?.forEach {
-          tracks.add(LatLng(it?.startLocation?.lat ?: 0.0, it?.startLocation?.lng ?: 0.0))
-          tracks.add(LatLng(it?.endLocation?.lat ?: 0.0, it?.endLocation?.lng ?: 0.0))
-        }
-      }
-    }
-  }
-
   if(locationPermissionState.allPermissionsGranted) {
     Box(modifier = Modifier.fillMaxSize()) {
       GoogleMap(
         modifier = Modifier.fillMaxSize(),
         uiSettings = MapUiSettings(zoomControlsEnabled = false, compassEnabled = false)
       ) {
-        if (tracks.isNotEmpty()) {
-          Polyline(points = tracks)
+        if (uiState is HomeUiState.Success) {
+          val decodedPoints = PolyUtil.decode((uiState as HomeUiState.Success).data.routes?.firstOrNull()?.polyline?.encodedPolyline)
+          Polyline(points = decodedPoints, color = MaterialTheme.colorScheme.primary)
         }
       }
       PointField(modifier = Modifier
@@ -117,8 +104,12 @@ import id.aej.jeky.presentation.theme.Primary
         destinationValue = destination.locationName,
         pickupPlaceholder = stringResource(id = R.string.pickup_location_txt),
         destinationPlaceholder = stringResource(R.string.destination_location_txt),
-        onPickupFocused = onPickupClick,
-        onDestinationFocused = onDestinationClick,
+        onPickupFocused = {
+          onPickupClick.invoke(pickup.locationName.ifEmpty { "-" }, destination.locationName.ifEmpty { "-" })
+        },
+        onDestinationFocused = {
+          onDestinationClick.invoke(pickup.locationName.ifEmpty { "-" }, destination.locationName.ifEmpty { "-" })
+        },
         onEditButtonClick = {}
       )
     }

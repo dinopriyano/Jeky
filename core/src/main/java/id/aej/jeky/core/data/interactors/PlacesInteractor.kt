@@ -1,8 +1,9 @@
 package id.aej.jeky.core.data.interactors
 
 import id.aej.jeky.core.data.source.Resource
-import id.aej.jeky.core.data.source.remote.dto.response.GetPlacesRoutesResponse
+import id.aej.jeky.core.data.source.remote.dto.request.LatLng
 import id.aej.jeky.core.data.source.remote.dto.response.PlacesResponse
+import id.aej.jeky.core.data.source.remote.dto.response.RoutesResponse
 import id.aej.jeky.core.domain.repository.PlacesRepository
 import id.aej.jeky.core.domain.usecase.PlacesUseCase
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +19,9 @@ class PlacesInteractor constructor(
   }
 
   override suspend fun getPlaceRoutes(
-    origin: String, destination: String
-  ): Flow<Resource<GetPlacesRoutesResponse>> {
+    origin: LatLng,
+    destination: LatLng
+  ): Flow<Resource<RoutesResponse>> {
     return repository.getPlacesRoute(origin, destination)
   }
 }

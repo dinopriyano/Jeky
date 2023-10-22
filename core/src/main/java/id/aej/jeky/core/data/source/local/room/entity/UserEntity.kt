@@ -1,6 +1,5 @@
 package id.aej.jeky.core.data.source.local.room.entity
 
-import android.service.autofill.UserData
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey

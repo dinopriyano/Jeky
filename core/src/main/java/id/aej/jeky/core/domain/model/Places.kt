@@ -20,20 +20,20 @@ data class Location(
 data class DisplayName(
 
 	@field:SerializedName("text")
-	val text: String,
+	val text: String?,
 
 	@field:SerializedName("languageCode")
-	val languageCode: String
+	val languageCode: String?
 )
 
 data class PlacesItem(
 
 	@field:SerializedName("formattedAddress")
-	val formattedAddress: String,
+	val formattedAddress: String?,
 
 	@field:SerializedName("displayName")
-	val displayName: DisplayName,
+	val displayName: DisplayName?,
 
 	@field:SerializedName("location")
-	val location: Location
+	val location: Location?
 )

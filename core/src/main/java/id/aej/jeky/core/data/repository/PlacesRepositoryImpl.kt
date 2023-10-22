@@ -2,8 +2,13 @@ package id.aej.jeky.core.data.repository
 
 import id.aej.jeky.core.data.source.Resource
 import id.aej.jeky.core.data.source.remote.SafeApiCall
-import id.aej.jeky.core.data.source.remote.dto.response.GetPlacesRoutesResponse
+import id.aej.jeky.core.data.source.remote.dto.request.Destination
+import id.aej.jeky.core.data.source.remote.dto.request.LatLng
+import id.aej.jeky.core.data.source.remote.dto.request.Location
+import id.aej.jeky.core.data.source.remote.dto.request.Origin
+import id.aej.jeky.core.data.source.remote.dto.request.RoutesRequest
 import id.aej.jeky.core.data.source.remote.dto.response.PlacesResponse
+import id.aej.jeky.core.data.source.remote.dto.response.RoutesResponse
 import id.aej.jeky.core.data.source.remote.network.JekyService
 import id.aej.jeky.core.domain.repository.PlacesRepository
 import kotlinx.coroutines.flow.Flow
@@ -23,10 +28,21 @@ class PlacesRepositoryImpl constructor(
   }
 
   override suspend fun getPlacesRoute(
-    origin: String, destination: String
-  ): Flow<Resource<GetPlacesRoutesResponse>> {
+    origin: LatLng,
+    destination: LatLng
+  ): Flow<Resource<RoutesResponse>> {
     return flow {
-      emit( safeApiCall { apiService.getPlaceRoutes("https://maps.googleapis.com/maps/api/directions/json", origin, destination) } )
+      emit(
+        safeApiCall {
+          apiService.getPlaceRoutes(
+            "https://routes.googleapis.com/directions/v2:computeRoutes",
+            RoutesRequest(
+              Origin(Location(origin)),
+              Destination(Location(destination))
+            )
+          )
+        }
+      )
     }
   }
 
